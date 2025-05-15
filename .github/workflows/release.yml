@@ -24,18 +24,24 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Publish (self-contained, win-x64)
+      - name: Publish (framework-dependent)
         run: dotnet publish -c Release -o publish
+
+      - name: Create ZIP archive
+        run: |
+          cd publish
+          7z a ../ss-rgb-win.zip *
+        shell: bash
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ss-rgb-win-x64
-          path: publish/ss-rgb.exe
+          name: ss-rgb-win
+          path: ss-rgb-win.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: publish/ss-rgb.exe
+          files: ss-rgb-win.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
